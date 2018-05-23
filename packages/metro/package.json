@@ -9,6 +9,7 @@
     "url": "git@github.com:facebook/metro.git"
   },
   "scripts": {
+    "package-release": "test -d build && rm -rf ../../packages-release/metro && cp -R ../metro ../../packages-release/metro && rm -rf ../../packages-release/metro/src && mv ../../packages-release/metro/build ../../packages-release/metro/src",
     "prepare-release": "test -d build && rm -rf src.real && mv src src.real && mv build src",
     "cleanup-release": "test ! -e build && mv src build && mv src.real src"
   },

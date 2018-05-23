@@ -14,3 +14,27 @@ This project was previously part of the [react-native](https://github.com/facebo
 ## Installation & Documentation
 
 See [the Metro website](https://facebook.github.io/metro/) for documentation.
+
+
+# Custom Metro To Split Modules For React Native
+
+🚇 Reference Metro From Native Path
+- **🚅 build es6 to es5**: 
+```
+cd ~/workspace/smart-metro
+npm run build-clean && npm run build
+```
+- **🚅 publish local release**: 
+```
+cd packages/metro
+npm run package-release
+
+```
+- **🚅 install local**: 
+```
+npm install -g install-local
+
+cd ~/workspace/ReactNativeProject
+rm -rf node_modules/metro
+install-local --save ~/workspace/smart-metro/packages-release/metro
+```
