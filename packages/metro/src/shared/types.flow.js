@@ -53,7 +53,7 @@ export type BundleOptions = {
   +runModule: boolean,
   sourceMapUrl: ?string,
   unbundle: boolean,
-  createModuleIdFactory?: () => (path: string) => number,
+  createModuleIdFactory?: () => (path: string) => number | string,
 };
 
 export type ModuleGroups = {|
@@ -79,7 +79,7 @@ export type Options = {|
   blacklistRE?: RegExp,
   cacheStores: $ReadOnlyArray<CacheStore<TransformedCode>>,
   cacheVersion: string,
-  createModuleIdFactory?: () => (path: string) => number,
+  createModuleIdFactory?: () => (path: string) => number | string,
   +dynamicDepsInPackages: DynamicRequiresBehavior,
   enableBabelRCLookup: boolean,
   extraNodeModules?: {},
@@ -125,6 +125,6 @@ export type RequestOptions = {|
   dev?: boolean,
   minify: boolean,
   platform: string,
-  createModuleIdFactory?: () => (path: string) => number,
+  createModuleIdFactory?: () => (path: string) => number | string,
   onProgress?: (transformedFileCount: number, totalFileCount: number) => void,
 |};

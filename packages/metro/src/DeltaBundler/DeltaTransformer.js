@@ -81,7 +81,7 @@ class DeltaTransformer extends EventEmitter {
   _dependencyGraph: DependencyGraph;
   _getPolyfills: ({platform: ?string}) => $ReadOnlyArray<string>;
   _polyfillModuleNames: $ReadOnlyArray<string>;
-  _getModuleId: (path: string) => number;
+  _getModuleId: (path: string) => number | string;
   _deltaCalculator: DeltaCalculator;
   _bundleOptions: BundleOptions;
   _currentBuildPromise: ?Promise<DeltaTransformResponse>;

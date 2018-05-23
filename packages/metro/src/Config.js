@@ -158,7 +158,7 @@ export type ConfigT = {
   /**
    * An optional custom module ID factory creator used by the bundler.
    */
-  createModuleIdFactory?: () => (path: string) => number,
+  createModuleIdFactory?: () => (path: string) => number | string,
 };
 
 const DEFAULT = ({

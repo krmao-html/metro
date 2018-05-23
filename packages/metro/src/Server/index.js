@@ -72,7 +72,7 @@ class Server {
     blacklistRE: void | RegExp,
     cacheStores: $ReadOnlyArray<CacheStore<TransformedCode>>,
     cacheVersion: string,
-    createModuleIdFactory?: () => (path: string) => number,
+    createModuleIdFactory?: () => (path: string) => number | string,
     enableBabelRCLookup: boolean,
     extraNodeModules: {},
     getPolyfills: ({platform: ?string}) => $ReadOnlyArray<string>,
