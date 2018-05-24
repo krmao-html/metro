@@ -8,3 +8,5 @@ packages/*/build/
 
 /packages-release
 package-lock.json
+
+.idea/

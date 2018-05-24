@@ -22,7 +22,7 @@ import type {MetroSourceMap} from 'metro-source-map';
 function buildBundle(
   packagerClient: Server,
   requestOptions: RequestOptions,
-): Promise<{code: string, map: string}> {
+): Promise<{code: string, map: string, modules: mixed}> {
   return packagerClient.build({
     ...Server.DEFAULT_BUNDLE_OPTIONS,
     ...requestOptions,

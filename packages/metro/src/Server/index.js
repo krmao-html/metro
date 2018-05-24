@@ -228,7 +228,7 @@ class Server {
     return this._deltaBundler;
   }
 
-  async build(options: BundleOptions): Promise<{code: string, map: string}> {
+  async build(options: BundleOptions): Promise<{code: string, map: string, modules: mixed}> {
     options = {
       ...options,
       runBeforeMainModule: this._opts.getModulesRunBeforeMainModule(
@@ -249,6 +249,7 @@ class Server {
     return {
       code: fullBundle.bundle,
       map: fullMap,
+      modules: fullBundle.modules,
     };
   }
 

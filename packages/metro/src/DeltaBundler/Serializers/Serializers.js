@@ -108,9 +108,20 @@ async function fullBundle(
     options,
   );
 
-  const code = modules.map(m => m.code);
+  var finalModules = modules;
+  if(options.excludedModules) {
+    console.log("\n\nFilter before modules.length=="+finalModules.length+ "\n")
+    finalModules = finalModules.filter(module => {
+      const keep = !options.excludedModules[module.name];
+      console.log("Filtering "+ (keep? "keep   -> ": "remove -> ")+ module.name+ ", "+  module.path)
+      return keep
+    })
+    console.log("\nFilter after  modules.length=="+finalModules.length+ "\n")
+  }
 
+  const code = finalModules.map(m => m.code);
   return {
+    modules: finalModules,
     bundle: code.join('\n'),
     lastModified,
     numModifiedFiles,
