@@ -23,6 +23,24 @@ function buildBundle(
   packagerClient: Server,
   requestOptions: RequestOptions,
 ): Promise<{code: string, map: string, modules: mixed}> {
+
+  if(requestOptions.exclude) {
+    console.log("\nInit excludedModules from path:"+ requestOptions.exclude)
+    requestOpts.excludedModules = require(require('path').resolve(process.cwd(), requestOptions.exclude)).modules;
+  }
+
+  /*requestOptions.createModuleIdFactory = () => {
+     const fileToIdMap: Map<string, number | string> = new Map();
+     return (path) => {
+       const destIdStr = path.split('/').join('_').replace(".", "_").replace("_Users_maokangren_workspace_template_apps_app-template_react_native_", "");
+       let id = fileToIdMap.get(path);
+       if (typeof id !== 'number' && typeof id !== 'string') {
+         fileToIdMap.set(path, destIdStr);
+       }
+       return destIdStr;
+     }
+   }*/
+
   return packagerClient.build({
     ...Server.DEFAULT_BUNDLE_OPTIONS,
     ...requestOptions,
