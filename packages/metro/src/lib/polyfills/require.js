@@ -35,7 +35,7 @@ type Module = {
   exports: Exports,
   hot?: HotModuleReloadingData,
 };
-type ModuleID = number;
+type ModuleID = number | string;
 type ModuleDefinition = {|
   dependencyMap: ?DependencyMap,
   exports: Exports,
@@ -57,14 +57,14 @@ global.__d = define;
 const modules: ModuleMap = Object.create(null);
 if (__DEV__) {
   var verboseNamesToModuleIds: {
-    [key: string]: number,
+    [key: string]: number | string,
     __proto__: null,
   } = Object.create(null);
 }
 
 function define(
   factory: FactoryFn,
-  moduleId: number,
+  moduleId: number | string,
   dependencyMap?: DependencyMap,
 ) {
   if (moduleId in modules) {
@@ -111,7 +111,7 @@ function define(
 }
 
 function require(moduleId: ModuleID | VerboseModuleNameForDev) {
-  if (__DEV__ && typeof moduleId === 'string') {
+  if (__DEV__ && typeof moduleId === 'string' && !/[a-z,0-9]{32}/.test(moduleId)) {
     const verboseName = moduleId;
     moduleId = verboseNamesToModuleIds[verboseName];
     if (moduleId == null) {
@@ -125,11 +125,12 @@ function require(moduleId: ModuleID | VerboseModuleNameForDev) {
   }
 
   //$FlowFixMe: at this point we know that moduleId is a number
-  const moduleIdReallyIsNumber: number = moduleId;
-  const module = modules[moduleIdReallyIsNumber];
+  //const moduleIdReallyIsNumber: number = moduleId;
+  const finalModuleId: number | string = moduleId;
+  const module = modules[finalModuleId];
   return module && module.isInitialized
     ? module.exports
-    : guardedLoadModule(moduleIdReallyIsNumber, module);
+    : guardedLoadModule(finalModuleId, module);
 }
 
 let inGuard = false;

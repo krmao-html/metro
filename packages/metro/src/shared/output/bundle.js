@@ -15,6 +15,9 @@ const Server = require('../../Server');
 const meta = require('./meta');
 const relativizeSourceMapInline = require('../../lib/relativizeSourceMap');
 const writeFile = require('./writeFile');
+const createModuleIdFactory = require('../../lib/createModuleIdFactory');
+const createModuleIdFactoryWithMD5 = require('../../lib/createModuleIdFactoryWithMD5');
+
 
 import type {OutputOptions, RequestOptions} from '../types.flow';
 import type {MetroSourceMap} from 'metro-source-map';
@@ -26,20 +29,11 @@ function buildBundle(
 
   if(requestOptions.exclude) {
     console.log("\nInit excludedModules from path:"+ requestOptions.exclude)
-    requestOpts.excludedModules = require(require('path').resolve(process.cwd(), requestOptions.exclude)).modules;
+    requestOptions.excludedModules = require(String(require('path').resolve(process.cwd(), requestOptions.exclude))).modules;
   }
 
-  /*requestOptions.createModuleIdFactory = () => {
-     const fileToIdMap: Map<string, number | string> = new Map();
-     return (path) => {
-       const destIdStr = path.split('/').join('_').replace(".", "_").replace("_Users_maokangren_workspace_template_apps_app-template_react_native_", "");
-       let id = fileToIdMap.get(path);
-       if (typeof id !== 'number' && typeof id !== 'string') {
-         fileToIdMap.set(path, destIdStr);
-       }
-       return destIdStr;
-     }
-   }*/
+  requestOptions.createModuleIdFactory = createModuleIdFactoryWithMD5
+  // requestOptions.createModuleIdFactory = createModuleIdFactory
 
   return packagerClient.build({
     ...Server.DEFAULT_BUNDLE_OPTIONS,

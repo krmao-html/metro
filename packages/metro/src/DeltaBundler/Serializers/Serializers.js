@@ -270,6 +270,7 @@ async function getAssets(
           options.assetPlugins,
           options.platform,
         );
+
       }
       return null;
     }),
