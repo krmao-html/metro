@@ -15,6 +15,11 @@ const Server = require('../../../Server');
 const asAssets = require('./as-assets');
 const asIndexedFile = require('./as-indexed-file').save;
 
+const createModuleIdFactory = require('../../../lib/createModuleIdFactory');
+const createModuleIdFactoryWithMD5 = require('../../../lib/createModuleIdFactoryWithMD5');
+const packageUtil = require('../package-util')
+let excludedModules:mixed = null
+
 import type {OutputOptions, RequestOptions} from '../../types.flow';
 import type {RamBundleInfo} from '../../../DeltaBundler/Serializers/Serializers';
 
@@ -22,13 +27,22 @@ async function buildBundle(
   packagerClient: Server,
   requestOptions: RequestOptions,
 ): Promise<RamBundleInfo> {
-  const options = {
+
+	excludedModules = packageUtil.checkExcludeModules(requestOptions.exclude)
+
+	requestOptions.createModuleIdFactory = createModuleIdFactoryWithMD5
+    // requestOptions.createModuleIdFactory = createModuleIdFactory
+
+	const options = {
     ...Server.DEFAULT_BUNDLE_OPTIONS,
     ...requestOptions,
     bundleType: 'ram',
     isolateModuleIDs: true,
   };
-  return await packagerClient.getRamBundleInfo(options);
+  return await packagerClient.getRamBundleInfo(options).then((tmpResult) => {
+	  tmpResult.lazyModules = packageUtil.filterFinalModules(tmpResult.lazyModules, excludedModules, requestOptions.bundleOutput)
+	  return tmpResult
+  })
 }
 
 function saveUnbundle(

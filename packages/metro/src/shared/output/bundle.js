@@ -15,32 +15,36 @@ const Server = require('../../Server');
 const meta = require('./meta');
 const relativizeSourceMapInline = require('../../lib/relativizeSourceMap');
 const writeFile = require('./writeFile');
-const createModuleIdFactory = require('../../lib/createModuleIdFactory');
-const createModuleIdFactoryWithMD5 = require('../../lib/createModuleIdFactoryWithMD5');
-
 
 import type {OutputOptions, RequestOptions} from '../types.flow';
 import type {MetroSourceMap} from 'metro-source-map';
 
+const createModuleIdFactory = require('../../lib/createModuleIdFactory');
+const createModuleIdFactoryWithMD5 = require('../../lib/createModuleIdFactoryWithMD5');
+const packageUtil = require('./package-util')
+let excludedModules:mixed = null
+
 function buildBundle(
   packagerClient: Server,
   requestOptions: RequestOptions,
-): Promise<{code: string, map: string, modules: mixed}> {
+): Promise<{code: string, map: string}> {
 
-  if(requestOptions.exclude) {
-    console.log("\nInit excludedModules from path:"+ requestOptions.exclude)
-    requestOptions.excludedModules = require(String(require('path').resolve(process.cwd(), requestOptions.exclude))).modules;
-  }
+	excludedModules = packageUtil.checkExcludeModules(requestOptions.exclude)
 
   requestOptions.createModuleIdFactory = createModuleIdFactoryWithMD5
   // requestOptions.createModuleIdFactory = createModuleIdFactory
 
   return packagerClient.build({
-    ...Server.DEFAULT_BUNDLE_OPTIONS,
-    ...requestOptions,
-    bundleType: 'bundle',
-    isolateModuleIDs: true,
-  });
+		  ...Server.DEFAULT_BUNDLE_OPTIONS,
+	    ...requestOptions,
+	    bundleType: 'bundle',
+	    isolateModuleIDs: true,
+	  }).then((tmpResult) => {
+
+  	tmpResult.code = packageUtil.filterFinalModules(tmpResult.modules, excludedModules, requestOptions.bundleOutput).map(m => m.code).join('\n')
+
+	  return tmpResult
+  })
 }
 
 function relativateSerializedMap(

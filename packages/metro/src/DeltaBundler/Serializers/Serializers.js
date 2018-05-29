@@ -102,29 +102,19 @@ async function fullSourceMapObject(
 async function fullBundle(
   deltaBundler: DeltaBundler,
   options: BundleOptions,
-): Promise<{bundle: string, numModifiedFiles: number, lastModified: Date}> {
+): Promise<{bundle: string, numModifiedFiles: number, lastModified: Date, modules:mixed}> {
   const {modules, numModifiedFiles, lastModified} = await _getAllModules(
     deltaBundler,
     options,
   );
 
-  var finalModules = modules;
-  if(options.excludedModules) {
-    console.log("\n\nFilter before modules.length=="+finalModules.length+ "\n")
-    finalModules = finalModules.filter(module => {
-      const keep = !options.excludedModules[module.name];
-      console.log("Filtering "+ (keep? "keep   -> ": "remove -> ")+ module.name+ ", "+  module.path)
-      return keep
-    })
-    console.log("\nFilter after  modules.length=="+finalModules.length+ "\n")
-  }
+  const code = modules.map(m => m.code);
 
-  const code = finalModules.map(m => m.code);
   return {
-    modules: finalModules,
     bundle: code.join('\n'),
     lastModified,
     numModifiedFiles,
+	  modules: modules,
   };
 }
 

@@ -127,4 +127,6 @@ export type RequestOptions = {|
   platform: string,
   createModuleIdFactory?: () => (path: string) => number | string,
   onProgress?: (transformedFileCount: number, totalFileCount: number) => void,
+  exclude?: string,
+	bundleOutput?: string,
 |};

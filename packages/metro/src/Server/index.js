@@ -246,27 +246,10 @@ class Server {
       options,
     );
 
-    const manifest = {modules: Object.create(null)};
-    if(fullBundle.modules){
-        fullBundle.modules.forEach(module => {
-            if(!module.polyfill && !module.virtual) {
-                manifest.modules[module.name] = {id: module.id};
-            }
-        });
-
-        if(options.bundleOutput){
-          const manifestJsonString = JSON.stringify(manifest, null, 2);
-          const writeManifest = require('../shared/output/writeFile')(options.bundleOutput + '.json', manifestJsonString, null);
-          console.log('manifest: Writing manifest output to '+options.bundleOutput + '.json')
-          writeManifest.then(function () {
-            console.log('manifest: Done writing manifest output')
-          });
-        }
-    }
-
     return {
       code: fullBundle.bundle,
       map: fullMap,
+      modules: fullBundle.modules,
     };
   }
 
