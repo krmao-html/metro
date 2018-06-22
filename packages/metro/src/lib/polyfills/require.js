@@ -124,13 +124,10 @@ function require(moduleId: ModuleID | VerboseModuleNameForDev) {
     }
   }
 
-  //$FlowFixMe: at this point we know that moduleId is a number
-  //const moduleIdReallyIsNumber: number = moduleId;
-  const finalModuleId: number | string = moduleId;
-  const module = modules[finalModuleId];
+  const module = modules[moduleId];
   return module && module.isInitialized
     ? module.exports
-    : guardedLoadModule(finalModuleId, module);
+    : guardedLoadModule(moduleId, module);
 }
 
 let inGuard = false;
@@ -154,7 +151,7 @@ const ID_MASK_SHIFT = 16;
 const LOCAL_ID_MASK = ~0 >>> ID_MASK_SHIFT;
 
 function unpackModuleId(
-  moduleId: ModuleID,
+  moduleId: number,
 ): {segmentId: number, localId: number} {
   const segmentId = moduleId >>> ID_MASK_SHIFT;
   const localId = moduleId & LOCAL_ID_MASK;
@@ -169,7 +166,7 @@ require.packModuleId = packModuleId;
 
 function loadModuleImplementation(moduleId, module) {
   const nativeRequire = global.nativeRequire;
-  if (!module && nativeRequire) {
+  if (!module && nativeRequire && typeof moduleId === 'number') {
     const {segmentId, localId} = unpackModuleId(moduleId);
     nativeRequire(localId, segmentId);
     module = modules[moduleId];

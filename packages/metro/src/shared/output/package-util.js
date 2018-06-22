@@ -23,11 +23,10 @@ function filterFinalModules(modules: mixed, excludedModules: mixed, bundleOutput
 		console.log("\n\nFilter before modules.length==" + finalModules.length + "\n")
 
 		finalModules = finalModules.filter(module => {
-			const keep = !excludedModules || (excludedModules && !excludedModules[module.name]);
+			const keep = !excludedModules || (excludedModules && !excludedModules[module.name] && module.type !== "script");
 			console.log("Filtering " + (keep ? "keep   -> " : "remove -> "), module.id, module.type, module.name, module.path | module.sourcePath)
-
-			if (keep && module.type === "module") {
-				manifest.modules[module.name] = {id: module.id, type: module.type}; // 暂不理解其它类型的用处, 目前只输出 'module' 类型
+			if (keep) {
+				manifest.modules[module.name] = {id: module.id, type: module.type}; // script 为头部全局定义脚本, 所以business 要删除掉, 因为 base 里面已经有了
 			}
 			return keep
 		})
